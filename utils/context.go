@@ -24,7 +24,7 @@ func GetIDsFromContext(ctx context.Context) (rootID, parentID, sampled string) {
 		return
 	}
 
-	data, ok := metadata.FromContext(ctx)
+	data, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return
 	}
@@ -89,10 +89,10 @@ func ContextFromHeaders(r *http.Request) context.Context {
 		mdSampledKey: sampled,
 	})
 
-	oldMD, found := metadata.FromContext(r.Context())
+	oldMD, found := metadata.FromIncomingContext(r.Context())
 	if found {
 		newMD = metadata.Join(newMD, oldMD)
 	}
 
-	return metadata.NewContext(r.Context(), newMD)
+	return metadata.NewIncomingContext(r.Context(), newMD)
 }

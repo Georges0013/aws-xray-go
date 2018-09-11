@@ -77,7 +77,7 @@ func GRPCClientUnaryInterceptor(
 		sampled = "1"
 	}
 
-	mdctx := metadata.NewContext(ctx, metadata.New(map[string]string{
+	mdctx := metadata.NewIncomingContext(ctx, metadata.New(map[string]string{
 		mdRootKey:    seg.TraceID,
 		mdParentKey:  subseg.ID,
 		mdSampledKey: sampled,
@@ -121,7 +121,7 @@ func AddSegmentToContext(seg *segment.Segment, ctx context.Context) context.Cont
 		sampled = "1"
 	}
 
-	newctx := metadata.NewContext(ctx, metadata.MD{
+	newctx := metadata.NewIncomingContext(ctx, metadata.MD{
 		mdParentKey:  []string{seg.ParentID},
 		mdRootKey:    []string{seg.TraceID},
 		mdSampledKey: []string{sampled},
@@ -138,7 +138,7 @@ func AddSegmentToContext(seg *segment.Segment, ctx context.Context) context.Cont
 
 // GetSegmentFromContext retrieves a segment from a context.Context instance.
 func GetSegmentFromContext(ctx context.Context) (*segment.Segment, error) {
-	md, ok := metadata.FromContext(ctx)
+	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, errors.New("Unable to load metadata from context")
 	}
